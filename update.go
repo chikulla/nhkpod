@@ -16,9 +16,14 @@ type PodcastSettings struct {
 	BaseURL  string
 }
 
-func UpdatePodcasts(e Env, conf Conf) error {
+func UpdatePodcasts(e Env) error {
+	conf, err := GetConf(e.ConfPath)
+	if err != nil {
+		return err
+	}
+
 	// Clean workdir first
-	err := os.RemoveAll(e.WorkDir)
+	err = os.RemoveAll(e.WorkDir)
 	if err != nil {
 		return err
 	}

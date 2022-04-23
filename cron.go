@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func StartScheduler(e Env, c Conf) error {
+func StartScheduler(e Env) error {
 	tz, err := time.LoadLocation("JST")
 	if err != nil {
 		tz = time.UTC
@@ -14,7 +14,7 @@ func StartScheduler(e Env, c Conf) error {
 	s := gocron.NewScheduler(tz)
 
 	_, err = s.Cron(e.Schedule).SingletonMode().Do(func() {
-		err := UpdatePodcasts(e, c)
+		err := UpdatePodcasts(e)
 		if err != nil {
 			log.Println(err)
 		}

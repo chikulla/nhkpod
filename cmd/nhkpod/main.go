@@ -7,18 +7,18 @@ import (
 )
 
 func main() {
-	env, conf, err := setup()
+	env, err := setup()
 	if err != nil {
 		log.Fatalln(err)
 		os.Exit(1)
 	}
 
 	log.Println("initial audio download")
-	if err := nhkpod2.UpdatePodcasts(*env, *conf); err != nil {
+	if err := nhkpod2.UpdatePodcasts(*env); err != nil {
 		log.Println(err)
 	}
 
-	if err := nhkpod2.StartScheduler(*env, *conf); err != nil {
+	if err := nhkpod2.StartScheduler(*env); err != nil {
 		log.Fatalln(err)
 		os.Exit(1)
 	}
@@ -30,19 +30,13 @@ func main() {
 	}
 }
 
-func setup() (*nhkpod2.Env, *nhkpod2.Conf, error) {
+func setup() (*nhkpod2.Env, error) {
 	env := nhkpod2.Env{}
 	if err := env.Init(); err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 	if err := nhkpod2.SetupLogOutput(env); err != nil {
-		return nil, nil, err
+		return nil, err
 	}
-
-	conf, err := nhkpod2.GetConf(env.ConfPath)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	return &env, conf, nil
+	return &env, nil
 }
