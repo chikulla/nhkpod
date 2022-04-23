@@ -2,9 +2,11 @@ package nhkpod
 
 import (
 	"errors"
+	"fmt"
 	"github.com/bogem/id3v2"
 	"github.com/canhlinh/hlsdl"
 	ffmpeg "github.com/u2takey/ffmpeg-go"
+	"log"
 	"os"
 	"path"
 	"path/filepath"
@@ -99,7 +101,8 @@ func (e *Episode) GetTSRawFilePath(workDir string) string {
 }
 
 func (e *Episode) GetTSRawFileDir(workDir string) string {
-	return path.Join(workDir, e.ID)
+	dt := e.Started.Format(TFormat)
+	return path.Join(workDir, e.ID+dt)
 }
 
 func (e *Episode) WriteTag(destDir string) error {
@@ -125,8 +128,18 @@ func (e *Episode) Exists(destDir string) bool {
 	return err == nil
 }
 
+func (e *Episode) RecoverTSPanic() error {
+	if rec := recover(); rec != nil {
+		err := fmt.Errorf("Failed to dl %s: %w", e.ID, rec)
+		log.Println(err)
+		return err
+	}
+	return nil
+}
+
 func (e *Episode) DownloadTS(workDir string) error {
 	client := hlsdl.New(e.M3u8Url, nil, e.GetTSRawFileDir(workDir), 64, false)
+	defer e.RecoverTSPanic()
 	_, err := client.Download()
 	if err != nil {
 		return err
@@ -139,6 +152,7 @@ func (e *Episode) Download(workDir, destDir string) error {
 		return nil
 	}
 
+	log.Println("downloading: ", e.AudioFile(destDir))
 	defer e.DeleteTSFile(workDir) // nothing to do with the error
 	if err := e.DownloadTS(workDir); err != nil {
 		return err

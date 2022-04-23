@@ -1,9 +1,11 @@
 package nhkpod
 
 import (
+	"log"
 	"os"
 	"path"
 	"strings"
+	"sync"
 )
 
 type PodcastSettings struct {
@@ -31,7 +33,7 @@ func UpdatePodcasts(e Env, conf Conf) error {
 			ID:       p.ID,
 			CornerID: p.CornerID,
 			RootDir:  rootDir,
-			WorkDir:  e.WorkDir,
+			WorkDir:  path.Join(e.WorkDir, p.ID+p.CornerID),
 			BaseURL:  e.BaseURL,
 		}
 		if err != nil {
@@ -80,12 +82,18 @@ func DownloadEpisodes(s PodcastSettings, p Program) error {
 	if err != nil {
 		return err
 	}
+	wg := sync.WaitGroup{}
 	for _, ep := range *eps {
-		err := DownloadEpisode(s, ep)
-		if err != nil {
-			return err
-		}
+		wg.Add(1)
+		go func(s PodcastSettings, ep Episode) {
+			defer wg.Done()
+			err := DownloadEpisode(s, ep)
+			if err != nil {
+				log.Println(err)
+			}
+		}(s, ep)
 	}
+	wg.Wait()
 	return nil
 }
 

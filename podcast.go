@@ -37,13 +37,20 @@ func GeneratePodcast(s PodcastSettings, program Program) (*podcast.Podcast, erro
 		eps[i] = *e
 	}
 	n := time.Now()
-	p := podcast.New(eps[0].Program, "", "", &Pubdate, &n)
+	p := podcast.New(PodcastTitle(s, program), "", "", &Pubdate, &n)
 	p.Language = "ja_jp"
 	p.AddImage(program.ImageUrl)
 	for _, ep := range eps {
 		p.AddItem(toPodcastItem(s.BaseURL, ep))
 	}
 	return &p, nil
+}
+
+func PodcastTitle(s PodcastSettings, program Program) string {
+	if s.CornerID == "" {
+		return program.Title
+	}
+	return program.Title + " " + program.Corner
 }
 
 func toPodcastItem(baseUrl string, ep Episode) podcast.Item {
