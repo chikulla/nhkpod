@@ -3,5 +3,5 @@
 audio/
 temp/
 assets/
-./nhkpod
+nhkpod
 *.log
