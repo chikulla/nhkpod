@@ -7,10 +7,7 @@ import (
 )
 
 func SetupLogOutput(e Env) error {
-	err := os.Remove(e.LogFile)
-	if err != nil {
-		return err
-	}
+	os.Remove(e.LogFile) // if not exists, ignore error
 	file, err := os.OpenFile(e.LogFile, os.O_CREATE|os.O_RDWR, 0666)
 	if err != nil {
 		return err
