@@ -20,7 +20,7 @@ podcasts:
     corner_id: 29
 ```
 
-This will make podcasts `http://<host>:8080/audio/f295_29/feed.rss` and `http://<host>:8080/audio/f295_29/feed.rss`
+This will make podcasts `http://<host>:8080/audio/1633/feed.rss` and `http://<host>:8080/audio/f295_29/feed.rss`
 
 3. Run cmd/nhkpod/main.go by `make build && ./nhkpod` or your preferred method to run the go program. 
 Otherwise, you can docker-compose them. That way you just make `.env` then specify the podcast host.
