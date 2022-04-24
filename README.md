@@ -36,9 +36,6 @@ Then `docker-compose up`. The directory for audio files and feed.rss will be mou
 6. Register url `http://<host>:8080/audio/<site_id>/feed.rss`
    or `http://<host>:8080/audio/<site_id>_<corner_id>/feed.rss` on your podcast client.
 
-## Use Docker
-
-
 ## Environment variables
 
 | Key              | Description                                                         | Default    |
