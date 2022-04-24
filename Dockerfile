@@ -1,7 +1,5 @@
-FROM jrottenberg/ffmpeg:4.1-alpine
 FROM golang:1.18-alpine
-
-COPY --from=0 / /
+RUN apk add --no-cache ffmpeg
 
 WORKDIR /app
 EXPOSE 8080
